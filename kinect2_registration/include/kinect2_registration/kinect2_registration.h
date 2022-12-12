@@ -20,7 +20,6 @@
 #define __KINECT2_REGISTRATION_H__
 
 #include <vector>
-
 #include <opencv2/opencv.hpp>
 
 class DepthRegistration

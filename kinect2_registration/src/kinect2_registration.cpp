@@ -17,6 +17,8 @@
 
 #include <kinect2_registration/kinect2_registration.h>
 #include <kinect2_registration/kinect2_console.h>
+#include "rclcpp/rclcpp.hpp"
+
 
 #ifdef DEPTH_REG_CPU
 #include "depth_registration_cpu.h"
@@ -34,68 +36,67 @@ DepthRegistration::~DepthRegistration()
 {
 }
 
-bool DepthRegistration::init(const cv::Mat &cameraMatrixRegistered, const cv::Size &sizeRegistered, const cv::Mat &cameraMatrixDepth, const cv::Size &sizeDepth,
-                             const cv::Mat &distortionDepth, const cv::Mat &rotation, const cv::Mat &translation,
-                             const float zNear, const float zFar, const int deviceId)
+bool DepthRegistration::init(const cv::Mat& cameraMatrixRegistered, const cv::Size& sizeRegistered, const cv::Mat& cameraMatrixDepth, const cv::Size& sizeDepth,
+		const cv::Mat& distortionDepth, const cv::Mat& rotation, const cv::Mat& translation,
+		const float zNear, const float zFar, const int deviceId)
 {
-  this->cameraMatrixRegistered = cameraMatrixRegistered;
-  this->cameraMatrixDepth = cameraMatrixDepth;
-  this->rotation = rotation;
-  this->translation = translation;
-  this->sizeRegistered = sizeRegistered;
-  this->sizeDepth = sizeDepth;
-  this->zNear = zNear;
-  this->zFar = zFar;
+	this->cameraMatrixRegistered = cameraMatrixRegistered;
+	this->cameraMatrixDepth = cameraMatrixDepth;
+	this->rotation = rotation;
+	this->translation = translation;
+	this->sizeRegistered = sizeRegistered;
+	this->sizeDepth = sizeDepth;
+	this->zNear = zNear;
+	this->zFar = zFar;
 
-  cv::initUndistortRectifyMap(cameraMatrixDepth, distortionDepth, cv::Mat(), cameraMatrixRegistered, sizeRegistered, CV_32FC1, mapX, mapY);
+	cv::initUndistortRectifyMap(cameraMatrixDepth, distortionDepth, cv::Mat(), cameraMatrixRegistered, sizeRegistered, CV_32FC1, mapX, mapY);
 
-  return init(deviceId);
+	return init(deviceId);
 }
 
-DepthRegistration *DepthRegistration::New(Method method)
+DepthRegistration* DepthRegistration::New(Method method)
 {
-  if(method == DEFAULT)
-  {
+	if (method == DEFAULT)
+	{
 #ifdef DEPTH_REG_OPENCL
-    method = OPENCL;
+		method = OPENCL;
 #elif defined DEPTH_REG_CPU
-    method = CPU;
+		method = CPU;
 #endif
-  }
+	}
 
-  switch(method)
-  {
-  case DEFAULT:
-    OUT_ERROR("No default registration method available!");
-    break;
-  case CPU:
+	switch (method)
+	{
+	case DEFAULT:
+		RCLCPP_ERROR(rclcpp::get_logger("DepthRegistration"), "No default registration method available!");
+		break;
+	case CPU:
 #ifdef DEPTH_REG_CPU
-    OUT_INFO("Using CPU registration method!");
-    return new DepthRegistrationCPU();
+		RCLCPP_INFO(rclcpp::get_logger("DepthRegistration"),"Using CPU registration method!");
+		return new DepthRegistrationCPU();
 #else
-    OUT_ERROR("CPU registration method not available!");
-    break;
+		RCLCPP_ERROR(rclcpp::get_logger("DepthRegistration"),"CPU registration method not available!");
+	  break;
 #endif
-  case OPENCL:
+	case OPENCL:
 #ifdef DEPTH_REG_OPENCL
-    OUT_INFO("Using OpenCL registration method!");
-    return new DepthRegistrationOpenCL();
+	RCLCPP_INFO(rclcpp::get_logger("DepthRegistration"), "Using OpenCL registration method!");
+		return new DepthRegistrationOpenCL();
 #else
-    OUT_ERROR("OpenCL registration method not available!");
-    break;
+		RCLCPP_ERROR(rclcpp::get_logger("DepthRegistration"), "OpenCL registration method not available!");
+		break;
 #endif
-  }
-  return NULL;
+	}
+	return NULL;
 }
 
-
-const std::string getFunctionName(const std::string &name)
+const std::string getFunctionName(const std::string& name)
 {
-    size_t end = name.rfind('(');
-    if(end == std::string::npos)
-    {
-        end = name.size();
-    }
-    size_t begin = 1 + name.rfind(' ', end);
-    return name.substr(begin, end - begin);
+	size_t end = name.rfind('(');
+	if (end == std::string::npos)
+	{
+		end = name.size();
+	}
+	size_t begin = 1 + name.rfind(' ', end);
+	return name.substr(begin, end - begin);
 }

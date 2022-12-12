@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>iai_kinect2</name>
   <version>0.0.1</version>
   <description>
@@ -9,12 +9,12 @@
   <maintainer email="wiedemeyer@informatik.uni-bremen.de">Thiemo Wiedemeyer</maintainer>
   <license>Apache 2.0</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <run_depend>kinect2_calibration</run_depend>
-  <run_depend>kinect2_viewer</run_depend>
-  <run_depend>kinect2_bridge</run_depend>
-  <run_depend>kinect2_registration</run_depend>
+<!--  <exec_depend>kinect2_calibration</exec_depend>-->
+<!--  <exec_depend>kinect2_viewer</exec_depend>-->
+  <exec_depend>kinect2_bridge</exec_depend>
+  <exec_depend>kinect2_registration</exec_depend>
 
   <export>
     <metapackage/>

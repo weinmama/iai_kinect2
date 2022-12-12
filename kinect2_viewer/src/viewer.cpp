@@ -33,8 +33,6 @@
 
 #include <opencv2/opencv.hpp>
 
-#include <ros/ros.h>
-#include <ros/spinner.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/Image.h>
 
